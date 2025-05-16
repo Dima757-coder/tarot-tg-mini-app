@@ -1,4 +1,3 @@
-console.log(tarotCards);
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("card-container");
   const sendBtn = document.getElementById("send-btn");
@@ -9,23 +8,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedCards = [];
   const totalCardsToShow = 6;
 
-  // Создаём 6 карт-рубашек
   for (let i = 0; i < totalCardsToShow; i++) {
-  const card = document.createElement("div");
-  card.classList.add("card");
-  card.dataset.id = i;
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.dataset.id = i;
 
-  // HTML структура карты
-  card.innerHTML = `
-    <div class="card-inner">
-      <div class="card-front"></div>
-      <div class="card-back"></div>
-    </div>
-  `;
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front"></div>
+        <div class="card-back"></div>
+      </div>
+    `;
 
-  card.addEventListener("click", () => selectCard(card));
-  container.appendChild(card);
-}
+    card.addEventListener("click", () => selectCard(card));
+    container.appendChild(card);
+  }
 
   function selectCard(card) {
     if (selectedCards.includes(card)) return;
@@ -43,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const shuffled = shuffleArray(tarotCards).slice(0, 3);
     selectedCards.forEach((card, index) => {
       const meaning = shuffled[index];
-      const isReversed = Math.random() < 0.5; // 50% шанс "вверх ногами"
+      const isReversed = Math.random() < 0.5;
 
       const back = card.querySelector(".card-back");
       back.innerHTML = `
@@ -53,13 +50,17 @@ document.addEventListener("DOMContentLoaded", () => {
         <p style="margin-top: 8px; font-weight: bold;">${meaning.name}</p>
       `;
 
-      // Активируем анимацию переворота
       setTimeout(() => {
         card.classList.add("flipped");
-      }, index * 300); // Постепенный эффект
+      }, index * 300);
     });
 
     sendBtn.style.display = "none";
+
+    tg.sendData(JSON.stringify({
+      action: "show_result",
+      cards: shuffled.map(c => c.name)
+    }));
   });
 
   function shuffleArray(array) {
