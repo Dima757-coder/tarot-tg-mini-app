@@ -60,38 +60,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function showContinueButton() {
-    const btn = document.createElement("button");
-    btn.textContent = "Продолжить";
-    btn.id = "continue-btn";
-    btn.style.marginTop = "20px";
-    btn.style.padding = "12px 20px";
-    btn.style.fontSize = "16px";
-    btn.style.backgroundColor = "#4CAF50"; // Зелёный цвет
-    btn.style.color = "white";
-    btn.style.border = "none";
-    btn.style.borderRadius = "5px";
-    btn.style.cursor = "pointer";
+function showContinueButton() {
+  const btn = document.createElement("button");
+  btn.textContent = "Продолжить";
+  btn.id = "continue-btn";
+  btn.style.marginTop = "60px"; // Увеличили отступ — опускаем на 3 строки
+  btn.style.padding = "12px 20px";
+  btn.style.fontSize = "16px";
+  btn.style.backgroundColor = "#4CAF50";
+  btn.style.color = "white";
+  btn.style.border = "none";
+  btn.style.borderRadius = "5px";
+  btn.style.cursor = "pointer";
 
-    btn.addEventListener("click", () => {
-      const cardNames = selectedCards.map(card => {
-        const back = card.querySelector(".card-back");
-        const nameEl = back.querySelector("p");
-        return nameEl.textContent;
-      });
-
-      // Отправляем данные в Telegram
-      tg.sendData(JSON.stringify({
-        action: "show_result",
-        cards: cardNames
-      }));
-
-      // Можно закрыть окно или перейти к следующему шагу
-      tg.close();
+  btn.addEventListener("click", () => {
+    const cardNames = selectedCards.map(card => {
+      const back = card.querySelector(".card-back");
+      const nameEl = back.querySelector("p");
+      return nameEl.textContent;
     });
 
-    document.body.appendChild(btn);
-  }
+    tg.sendData(JSON.stringify({
+      action: "show_result",
+      cards: cardNames
+    }));
+
+    tg.close();
+  });
+
+  document.body.appendChild(btn);
+}
 
   function shuffleArray(array) {
     return [...array].sort(() => Math.random() - 0.5);
