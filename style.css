@@ -73,8 +73,18 @@ body {
   text-align: center;
 }
 
+.card-back img {
+  width: 90%;
+  max-height: 100px; /* Ограничиваем высоту */
+  object-fit: contain; /* Сохраняем пропорции */
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
 .card-back p {
-  margin-top: 8px;
-  font-size: 14px;
+  margin-top: 4px;
+  font-size: 12px;
   padding: 0 5px;
+  word-wrap: break-word;
+  line-height: 1.2;
 }
