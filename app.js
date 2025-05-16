@@ -11,21 +11,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Создаём 6 карт-рубашек
   for (let i = 0; i < totalCardsToShow; i++) {
-    const card = document.createElement("div");
-    card.classList.add("card");
-    card.dataset.id = i;
+  const card = document.createElement("div");
+  card.classList.add("card");
+  card.dataset.id = i;
 
-    // HTML структура карты
-    card.innerHTML = `
-      <div class="card-inner">
-        <div class="card-front"></div>
-        <div class="card-back"></div>
-      </div>
-    `;
+  // HTML структура карты
+  card.innerHTML = `
+    <div class="card-inner">
+      <div class="card-front"></div>
+      <div class="card-back"></div>
+    </div>
+  `;
 
-    card.addEventListener("click", () => selectCard(card));
-    container.appendChild(card);
-  }
+  card.addEventListener("click", () => selectCard(card));
+  container.appendChild(card);
+}
 
   function selectCard(card) {
     if (selectedCards.includes(card)) return;
