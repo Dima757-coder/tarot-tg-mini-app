@@ -1,3 +1,4 @@
+console.log(tarotCards);
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("card-container");
   const sendBtn = document.getElementById("send-btn");
