@@ -14,9 +14,10 @@ body {
 
 .card {
   width: 100%;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 2 / 3; /* Соотношение ширина:высота = 2:3 */
   perspective: 1000px;
   cursor: pointer;
+  position: relative;
 }
 
 .card-inner {
@@ -39,30 +40,21 @@ body {
   backface-visibility: hidden;
   border: 2px solid #ccc;
   border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
 }
 
 .card-front {
-  background-image: url('https://iili.io/3rgCq5x.jpg');
-  background-size: cover;
+  background-image: url('https://iili.io/38SQJ7g.png '); /* Рубашка */
 }
 
 .card-back {
   transform: rotateY(180deg);
   background-color: white;
-  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   padding: 10px;
-}
-
-button {
-  margin-top: 20px;
-  padding: 12px 20px;
-  font-size: 16px;
-  background-color: #007AFF;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
