@@ -65,41 +65,37 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showContinueButton() {
-    const btn = document.createElement("button");
-    btn.textContent = "Продолжить";
-    btn.id = "continue-btn";
-    btn.style.marginTop = "60px";
-    btn.style.padding = "12px 20px";
-    btn.style.fontSize = "16px";
-    btn.style.backgroundColor = "#4CAF50";
-    btn.style.color = "white";
-    btn.style.border = "none";
-    btn.style.borderRadius = "5px";
-    btn.style.cursor = "pointer";
+  const btn = document.createElement("button");
+  btn.textContent = "Продолжить";
+  btn.id = "continue-btn";
+  btn.style.marginTop = "60px";
+  btn.style.padding = "12px 20px";
+  btn.style.fontSize = "16px";
+  btn.style.backgroundColor = "#4CAF50";
+  btn.style.color = "white";
+  btn.style.border = "none";
+  btn.style.borderRadius = "5px";
+  btn.style.cursor = "pointer";
 
-    btn.addEventListener("click", () => {
-      const cardNames = selectedCards.map(card => {
-        const back = card.querySelector(".card-back");
-        const nameEl = back.querySelector("p");
-        return nameEl.textContent;
-      });
+  btn.addEventListener("click", () => {
+    const selectedCardsData = selectedCards.map((card) => {
+      const back = card.querySelector(".card-back");
+      const name = back.querySelector("p").textContent;
+      const isReversed = Math.random() < 0.5;
 
-      const selectedCardsData = selectedCards.map((card, index) => {
-  const back = card.querySelector(".card-back");
-  const name = back.querySelector("p").textContent;
-  const isReversed = Math.random() < 0.5; // Пример генерации позиции
-  return {
-    name: name,
-    position: isReversed ? "reversed" : "upright"
-  };
-});
+      return {
+        name: name,
+        position: isReversed ? "reversed" : "upright"
+      };
+    });
 
-tg.sendData(JSON.stringify({ cards: selectedCardsData }));
+    console.log("📤 Отправляемые данные:", { cards: selectedCardsData }); // Полезно для дебага
+    tg.sendData(JSON.stringify({ cards: selectedCardsData }));
 
-  setTimeout(() => {
-    tg.close();
-  }, 500); // Ждём 500 мс, чтобы данные успели отправиться
-});
+    setTimeout(() => {
+      tg.close();
+    }, 500); // Делаем паузу перед закрытием
+  });
 
       tg.close();
     });
