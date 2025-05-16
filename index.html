@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Выбор карт Таро</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tarot Mini App</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js "></script>
 </head>
 <body>
-    <div class="container">
-        <h1>🔮 Выберите 3 карты Таро</h1>
-        <div class="cards-grid" id="cards"></div>
-        <button id="submit-btn" disabled>Готово</button>
-    </div>
 
-    <script src="tarot-data.js"></script>
-    <script src="app.js"></script>
+  <!-- ⚠️ Нет label -->
+  <h1>Выберите 3 карты</h1>
+  <div id="card-container"></div>
+  <button id="send-btn">Показать результат</button>
+
+  <script src="tarot-data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
