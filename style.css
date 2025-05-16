@@ -6,42 +6,66 @@ body {
   text-align: center;
 }
 
-.cards-grid {
+#card-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin: 20px 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: 50px;
 }
 
-.tarot-card {
-  background: #2a2a2a;
-  border-radius: 10px;
-  padding: 10px;
-  cursor: pointer;
-  transition: transform 0.3s;
-}
-
-.tarot-card.selected {
-  border: 3px solid #8a2be2;
-  transform: scale(0.95);
-}
-
-.tarot-card img {
+.card {
   width: 100%;
-  border-radius: 8px;
-}
-
-#submit-btn {
-  background: #8a2be2;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 16px;
+  aspect-ratio: 2 / 3;
+  perspective: 1000px;
   cursor: pointer;
+  position: relative;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease;
 }
 
-#submit-btn:disabled {
-  background: #555;
-  cursor: not-allowed;
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-front {
+  background-image: url('https://iili.io/3r6wFwu.png ');
+  background-size: 110%;
+  background-position: center;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  background-color: rgba(30, 30, 30, 0.95);
+  flex-direction: column;
+  padding: 10px;
+  color: #fff;
+  font-weight: bold;
 }
