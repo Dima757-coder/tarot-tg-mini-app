@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     });
 
-    console.log("📤 Отправляемые данные:", { cards: selectedCardsData }); // Полезно для дебага
+    console.log("📤 Отправляемые данные:", { cards: selectedCardsData });
     tg.sendData(JSON.stringify({ cards: selectedCardsData }));
 
     setTimeout(() => {
@@ -97,13 +97,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 500); // Делаем паузу перед закрытием
   });
 
-      tg.close();
-    });
-
-    document.body.appendChild(btn);
-  }
-
-  function shuffleArray(array) {
-    return [...array].sort(() => Math.random() - 0.5);
-  }
-});
+  document.body.appendChild(btn);
+}
