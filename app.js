@@ -13,6 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const card = document.createElement("div");
     card.classList.add("card");
     card.dataset.id = i;
+
+    // HTML структура карты
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front"></div>
+        <div class="card-back"></div>
+      </div>
+    `;
+
     card.addEventListener("click", () => selectCard(card));
     container.appendChild(card);
   }
@@ -25,38 +34,31 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    card.classList.add("selected");
     selectedCards.push(card);
-
-    if (selectedCards.length === 3) {
-      sendBtn.disabled = false;
-    }
+    card.classList.add("selected");
   }
 
   sendBtn.addEventListener("click", () => {
     const shuffled = shuffleArray(tarotCards).slice(0, 3);
     selectedCards.forEach((card, index) => {
       const meaning = shuffled[index];
-      const img = document.createElement("img");
-      img.src = meaning.image_url_up;
-      img.alt = meaning.name;
-      img.style.width = "100%";
-      img.style.borderRadius = "10px";
-      card.innerHTML = "";
-      card.appendChild(img);
+      const isReversed = Math.random() < 0.5; // 50% шанс "вверх ногами"
 
-      const p = document.createElement("p");
-      p.textContent = `${meaning.name}: ${meaning.meaning.upright}`;
-      card.appendChild(p);
+      const back = card.querySelector(".card-back");
+      back.innerHTML = `
+        <img src="${isReversed ? meaning.image_url_down : meaning.image_url_up}" 
+             alt="${meaning.name}" 
+             style="width:100%; border-radius:10px;">
+        <p style="margin-top: 8px; font-weight: bold;">${meaning.name}</p>
+      `;
+
+      // Активируем анимацию переворота
+      setTimeout(() => {
+        card.classList.add("flipped");
+      }, index * 300); // Постепенный эффект
     });
 
     sendBtn.style.display = "none";
-
-    // Отправляем данные в Telegram
-    tg.sendData(JSON.stringify({
-      action: "show_result",
-      cards: shuffled.map(c => c.name)
-    }));
   });
 
   function shuffleArray(array) {
