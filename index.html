@@ -1,22 +1,19 @@
 <!DOCTYPE html>
-<html>
-<head><title>Test Tarot</title></head>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tarot Mini App</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js "></script>
+</head>
 <body>
-<h1>Выберите карты</h1>
-<button onclick="send()">Отправить тестовые карты</button>
-<script>
-Telegram.WebApp.ready();
-Telegram.WebApp.setHeaderTitle("Выбор карт");
 
-function send() {
-    Telegram.WebApp.sendData(JSON.stringify({
-        cards: [
-            {name: "Маг", position: "upright"},
-            {name: "Смерть", position: "reversed"},
-            {name: "Солнце", position: "upright"}
-        ]
-    }));
-}
-</script>
+  <h1>Выберите 3 карты</h1>
+<div id="card-container"></div>
+<!-- Кнопка "Продолжить" создаётся динамически в app.js -->
+
+  <script src="tarot-data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
