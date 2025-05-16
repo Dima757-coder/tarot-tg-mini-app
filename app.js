@@ -94,9 +94,12 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 });
 
-tg.sendData(JSON.stringify({
-  cards: selectedCardsData
-}));
+tg.sendData(JSON.stringify({ cards: selectedCardsData }));
+
+  setTimeout(() => {
+    tg.close();
+  }, 500); // Ждём 500 мс, чтобы данные успели отправиться
+});
 
       tg.close();
     });
