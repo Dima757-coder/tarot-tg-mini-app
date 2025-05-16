@@ -59,6 +59,9 @@ body {
 
 .card-front {
   background-image: url('https://iili.io/3r6wFwu.png ');
+  background-size: 110%; /* Увеличено относительно контейнера */
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .card-back {
