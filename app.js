@@ -64,7 +64,7 @@ function showContinueButton() {
   const btn = document.createElement("button");
   btn.textContent = "Продолжить";
   btn.id = "continue-btn";
-  btn.style.marginTop = "60px"; // Увеличили отступ — опускаем на 3 строки
+  btn.style.marginTop = "60px";
   btn.style.padding = "12px 20px";
   btn.style.fontSize = "16px";
   btn.style.backgroundColor = "#4CAF50";
@@ -74,17 +74,24 @@ function showContinueButton() {
   btn.style.cursor = "pointer";
 
   btn.addEventListener("click", () => {
-    const cardNames = selectedCards.map(card => {
+    const selectedCardData = selectedCards.map(card => {
       const back = card.querySelector(".card-back");
       const nameEl = back.querySelector("p");
-      return nameEl.textContent;
+      const img = back.querySelector("img");
+
+      return {
+        name: nameEl.textContent,
+        image: img.src,
+      };
     });
 
+    // Отправляем данные в Telegram-бота
     tg.sendData(JSON.stringify({
-      action: "show_result",
-      cards: cardNames
+      action: "cards_selected",
+      cards: selectedCardData
     }));
 
+    // Можно закрыть WebApp после отправки
     tg.close();
   });
 
