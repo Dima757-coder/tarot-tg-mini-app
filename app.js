@@ -44,8 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const back = card.querySelector(".card-back");
     back.innerHTML = `
       <img src="${isReversed ? meaning.image_url_down : meaning.image_url_up}" 
-           alt="${meaning.name}" 
-           style="width:100%; border-radius:10px;">
+     alt="${meaning.name}" 
+     style="width: 100%; height: auto; max-height: 80%; border-radius: 10px;">
       <p style="margin-top: 8px; font-weight: bold;">${meaning.name}</p>
     `;
 
