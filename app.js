@@ -1,48 +1,65 @@
-const tg = window.Telegram.WebApp;
-const cardsContainer = document.getElementById("cards");
-const submitBtn = document.getElementById("submit-btn");
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("card-container");
+  const sendBtn = document.getElementById("send-btn");
 
-let selectedCards = [];
+  const tg = window.Telegram.WebApp;
+  tg.ready();
 
-// Отображаем карты
-tarotCards.forEach((card, index) => {
-    const cardElement = document.createElement("div");
-    cardElement.className = "tarot-card";
-    cardElement.innerHTML = `
-        <img src="${card.image_url_up}" alt="${card.name}">
-        <h3>${card.name}</h3>
-    `;
-    cardElement.addEventListener("click", () => toggleCard(index));
-    cardsContainer.appendChild(cardElement);
-});
+  let selectedCards = [];
+  const totalCardsToShow = 6;
 
-// Выбор/отмена карты
-function toggleCard(index) {
-    const card = tarotCards[index];
-    const cardElement = cardsContainer.children[index];
+  // Создаём 6 карт-рубашек
+  for (let i = 0; i < totalCardsToShow; i++) {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.dataset.id = i;
+    card.addEventListener("click", () => selectCard(card));
+    container.appendChild(card);
+  }
 
-    if (selectedCards.includes(card)) {
-        selectedCards = selectedCards.filter(c => c !== card);
-        cardElement.classList.remove("selected");
-    } else {
-        if (selectedCards.length < 3) {
-            selectedCards.push(card);
-            cardElement.classList.add("selected");
-        }
+  function selectCard(card) {
+    if (selectedCards.includes(card)) return;
+
+    if (selectedCards.length >= 3) {
+      alert("Можно выбрать только 3 карты");
+      return;
     }
 
-    submitBtn.disabled = selectedCards.length !== 3;
-}
+    card.classList.add("selected");
+    selectedCards.push(card);
 
-// Отправка данных в бота
-submitBtn.addEventListener("click", () => {
-    const result = {
-        action: "tarot_selected",
-        cards: selectedCards.map(card => ({
-            name: card.name,
-            meaning: card.meaning
-        }))
-    };
-    tg.sendData(JSON.stringify(result));
-    tg.close();
+    if (selectedCards.length === 3) {
+      sendBtn.disabled = false;
+    }
+  }
+
+  sendBtn.addEventListener("click", () => {
+    const shuffled = shuffleArray(tarotCards).slice(0, 3);
+    selectedCards.forEach((card, index) => {
+      const meaning = shuffled[index];
+      const img = document.createElement("img");
+      img.src = meaning.image_url_up;
+      img.alt = meaning.name;
+      img.style.width = "100%";
+      img.style.borderRadius = "10px";
+      card.innerHTML = "";
+      card.appendChild(img);
+
+      const p = document.createElement("p");
+      p.textContent = `${meaning.name}: ${meaning.meaning.upright}`;
+      card.appendChild(p);
+    });
+
+    sendBtn.style.display = "none";
+
+    // Отправляем данные в Telegram
+    tg.sendData(JSON.stringify({
+      action: "show_result",
+      cards: shuffled.map(c => c.name)
+    }));
+  });
+
+  function shuffleArray(array) {
+    return [...array].sort(() => Math.random() - 0.5);
+  }
 });
