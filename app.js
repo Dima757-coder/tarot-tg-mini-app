@@ -1,64 +1,97 @@
-// app.js
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("card-container");
 
-Telegram.WebApp.ready();
-Telegram.WebApp.setHeaderTitle("Выберите карты");
+  const tg = window.Telegram.WebApp;
+  tg.ready();
 
-const cardContainer = document.getElementById('card-container');
-const selectedCards = [];
+  let selectedCards = [];
+  const totalCardsToShow = 6;
 
-// Функция отрисовки карт (берётся из tarot-data.js)
-function renderCards() {
-    tarotCards.forEach((card, index) => {
-        const cardElement = document.createElement('div');
-        cardElement.className = 'card';
-        cardElement.innerHTML = `
-            <img src="${card.image_url_up}" alt="${card.name}" />
-            <p>${card.name}</p>
-        `;
-        cardElement.addEventListener('click', () => selectCard(card));
-        cardContainer.appendChild(cardElement);
-    });
-}
+  // Создаём 6 карт-рубашек
+  for (let i = 0; i < totalCardsToShow; i++) {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.dataset.id = i;
 
-// Обработка выбора карты
-function selectCard(card) {
+    // HTML структура карты
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front"></div>
+        <div class="card-back"></div>
+      </div>
+    `;
+
+    card.addEventListener("click", () => selectCard(card));
+    container.appendChild(card);
+  }
+
+  function selectCard(card) {
     if (selectedCards.includes(card)) return;
 
-    if (selectedCards.length < 3) {
-        selectedCards.push(card);
-        updateSelectedDisplay();
-
-        if (selectedCards.length === 3) {
-            createContinueButton();
-        }
-    } else {
-        alert("Вы можете выбрать только 3 карты");
+    if (selectedCards.length >= 3) {
+      alert("Можно выбрать только 3 карты");
+      return;
     }
+
+    selectedCards.push(card);
+    card.classList.add("selected");
+
+    // Активируем анимацию переворота
+    const shuffled = shuffleArray(tarotCards);
+    const meaning = shuffled[0]; // Берём случайную карту
+    const isReversed = Math.random() < 0.5;
+
+    const back = card.querySelector(".card-back");
+    back.innerHTML = `
+      <img src="${isReversed ? meaning.image_url_down : meaning.image_url_up}" 
+           alt="${meaning.name}" 
+           style="width:100%; border-radius:10px;">
+      <p style="margin-top: 8px; font-weight: bold;">${meaning.name}</p>
+    `;
+
+    // Анимация переворота
+    setTimeout(() => {
+      card.classList.add("flipped");
+    }, 100);
+
+    // Проверяем, выбрано ли 3 карты
+    if (selectedCards.length === 3) {
+      showContinueButton();
+    }
+  }
+
+function showContinueButton() {
+  const btn = document.createElement("button");
+  btn.textContent = "Продолжить";
+  btn.id = "continue-btn";
+  btn.style.marginTop = "60px"; // Увеличили отступ — опускаем на 3 строки
+  btn.style.padding = "12px 20px";
+  btn.style.fontSize = "16px";
+  btn.style.backgroundColor = "#4CAF50";
+  btn.style.color = "white";
+  btn.style.border = "none";
+  btn.style.borderRadius = "5px";
+  btn.style.cursor = "pointer";
+
+  btn.addEventListener("click", () => {
+    const cardNames = selectedCards.map(card => {
+      const back = card.querySelector(".card-back");
+      const nameEl = back.querySelector("p");
+      return nameEl.textContent;
+    });
+
+    tg.sendData(JSON.stringify({
+      action: "show_result",
+      cards: cardNames
+    }));
+
+    tg.close();
+  });
+
+  document.body.appendChild(btn);
 }
 
-// Отображение выбранных карт
-function updateSelectedDisplay() {
-    console.log("Выбранные карты:", selectedCards.map(c => c.name));
-}
-
-// Создание кнопки "Продолжить"
-function createContinueButton() {
-    const button = document.createElement('button');
-    button.textContent = 'Продолжить';
-    button.className = 'continue-button';
-    button.onclick = () => {
-        // Отправка данных в Telegram-бота
-        const payload = {
-            cards: selectedCards.map(card => ({
-                name: card.name,
-                position: Math.random() > 0.5 ? "upright" : "reversed"
-            }))
-        };
-        Telegram.WebApp.sendData(JSON.stringify(payload)); // Основной вызов
-    };
-
-    document.body.appendChild(button);
-}
-
-// Запуск приложения
-renderCards();
+  function shuffleArray(array) {
+    return [...array].sort(() => Math.random() - 0.5);
+  }
+});
