@@ -1,12 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("card-container");
+
   const tg = window.Telegram.WebApp;
   tg.ready();
 
   let selectedCards = [];
   const totalCardsToShow = 6;
+  let usedCards = [];
 
-  // Создаём 6 карт-рубашек
   for (let i = 0; i < totalCardsToShow; i++) {
     const card = document.createElement("div");
     card.classList.add("card");
@@ -25,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function selectCard(card) {
     if (selectedCards.includes(card)) return;
+
     if (selectedCards.length >= 3) {
       alert("Можно выбрать только 3 карты");
       return;
@@ -33,16 +35,24 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedCards.push(card);
     card.classList.add("selected");
 
-    const shuffled = shuffleArray(tarotCards);
-    const meaning = shuffled[0];
+    // Выбираем случайную уникальную карту
+    let availableCards = tarotCards.filter(c => !usedCards.includes(c.name));
+    if (availableCards.length === 0) {
+      alert("Нет доступных уникальных карт");
+      return;
+    }
+
+    let meaning = shuffleArray(availableCards)[0];
+    usedCards.push(meaning.name);
+
     const isReversed = Math.random() < 0.5;
 
     const back = card.querySelector(".card-back");
     back.innerHTML = `
       <img src="${isReversed ? meaning.image_url_down : meaning.image_url_up}" 
            alt="${meaning.name}" 
-           style="width:100%; border-radius:10px;">
-      <p style="margin-top: 8px; font-weight: bold;">${meaning.name}</p>
+           style="width: 100%; height: auto; max-height: 75%; border-radius: 10px;">
+      <p>${meaning.name}</p>
     `;
 
     setTimeout(() => {
@@ -68,22 +78,15 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.style.cursor = "pointer";
 
     btn.addEventListener("click", () => {
-      const selectedCardData = selectedCards.map(card => {
+      const cardNames = selectedCards.map(card => {
         const back = card.querySelector(".card-back");
         const nameEl = back.querySelector("p");
-        const img = back.querySelector("img");
-        const isReversed = img.src.includes('_down') || img.src.includes('reversed');
-
-        return {
-          name: nameEl.textContent,
-          position: isReversed ? 'reversed' : 'upright',
-          image: img.src.trim()
-        };
+        return nameEl.textContent;
       });
 
       tg.sendData(JSON.stringify({
-        action: "cards_selected",
-        cards: selectedCardData
+        action: "show_result",
+        cards: cardNames
       }));
 
       tg.close();
