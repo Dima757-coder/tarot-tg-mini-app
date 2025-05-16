@@ -99,6 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tg.sendData(JSON.stringify({ cards: selectedCardsData }));
 
       setTimeout(() => {
+        tg.close();
       }, 500);
     });
 
