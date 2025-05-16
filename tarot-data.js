@@ -1,4 +1,4 @@
-[
+const tarotCards = [
   {
     "name": "Маг",
     "image_url_up": "https://iili.io/38S5Ab9.png ",
