@@ -79,9 +79,13 @@ function showContinueButton() {
       const nameEl = back.querySelector("p");
       const img = back.querySelector("img");
 
+      // Определяем, перевёрнута ли карта
+      const isReversed = img.src.includes('_down') || img.src.includes('reversed');
+
       return {
         name: nameEl.textContent,
-        image: img.src,
+        position: isReversed ? 'reversed' : 'upright',
+        image: img.src.trim()  // <-- Добавлено: передаем URL картинки
       };
     });
 
@@ -91,7 +95,6 @@ function showContinueButton() {
       cards: selectedCardData
     }));
 
-    // Можно закрыть WebApp после отправки
     tg.close();
   });
 
