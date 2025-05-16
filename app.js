@@ -84,10 +84,19 @@ document.addEventListener("DOMContentLoaded", () => {
         return nameEl.textContent;
       });
 
-      tg.sendData(JSON.stringify({
-        action: "show_result",
-        cards: cardNames
-      }));
+      const selectedCardsData = selectedCards.map((card, index) => {
+  const back = card.querySelector(".card-back");
+  const name = back.querySelector("p").textContent;
+  const isReversed = Math.random() < 0.5; // Пример генерации позиции
+  return {
+    name: name,
+    position: isReversed ? "reversed" : "upright"
+  };
+});
+
+tg.sendData(JSON.stringify({
+  cards: selectedCardsData
+}));
 
       tg.close();
     });
