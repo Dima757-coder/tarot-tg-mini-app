@@ -100,8 +100,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       console.log("📤 Отправляемые данные:", { cards: selectedCardsData, question });
-      tg.sendData(JSON.stringify({ cards: selectedCardsData, question }));
 
+      // Отправляем данные в Telegram
+      try {
+        tg.sendData(JSON.stringify({ cards: selectedCardsData, question }));
+        console.log("✅ Данные успешно отправлены в Telegram Web App");
+      } catch (error) {
+        console.error("❌ Ошибка при отправке данных:", error);
+      }
+
+      // Закрываем мини-приложение через 0.5 секунды
       setTimeout(() => {
         tg.close();
       }, 500);
