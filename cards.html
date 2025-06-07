@@ -3,17 +3,317 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Выбор карт Таро</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script> 
+  <title>Таро Расклад</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      text-align: center;
+      padding: 20px;
+    }
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .card {
+      width: 100px;
+      height: 160px;
+      perspective: 1000px;
+      cursor: pointer;
+      position: relative;
+    }
+    .card-inner {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .card-front {
+      background-image: url('https://iili.io/38S5Ab9.png');  /* Пример изображения рубашки */
+      background-size: cover;
+    }
+    .card-back {
+      transform: rotateY(180deg);
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    button {
+      margin-top: 60px;
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
   <h1>Выберите 3 карты</h1>
-  <div id="card-container"></div>
-  <!-- Кнопка "Продолжить" создаётся динамически в app.js -->
+  <div id="card-container" class="card-container"></div>
 
-  <script src="tarot-data.js"></script>
-  <script src="app.js"></script>
+  <script>
+    // === Массив карт Таро (22 старших аркана) ===
+    const tarotCards = [
+      {
+        name: "Маг",
+        image_url_up: "https://iili.io/38S5Ab9.png", 
+        image_url_down: "https://iili.io/38SU0rb.png" 
+      },
+      {
+        name: "Жрица",
+        image_url_up: "https://iili.io/38S5Vb1.png", 
+        image_url_down: "https://iili.io/38SUGYx.png" 
+      },
+      {
+        name: "Императрица",
+        image_url_up: "https://iili.io/38SUTQv.png", 
+        image_url_down: "https://iili.io/38SUzUN.png" 
+      },
+      {
+        name: "Император",
+        image_url_up: "https://iili.io/38SUWcI.png", 
+        image_url_down: "https://iili.io/38SUjXG.png" 
+      },
+      {
+        name: "Священник",
+        image_url_up: "https://iili.io/38SUqJt.png", 
+        image_url_down: "https://iili.io/38SUaLr.png" 
+      },
+      {
+        name: "Влюблённые",
+        image_url_up: "https://iili.io/38SUeKg.png", 
+        image_url_down: "https://iili.io/38SUZnP.png" 
+      },
+      {
+        name: "Колесница",
+        image_url_up: "https://iili.io/38SUHsF.png", 
+        image_url_down: "https://iili.io/38SUXyR.png" 
+      },
+      {
+        name: "Сила",
+        image_url_up: "https://iili.io/38SUwEo.png", 
+        image_url_down: "https://iili.io/38SUlVn.png" 
+      },
+      {
+        name: "Отшельник",
+        image_url_up: "https://iili.io/38SUKkS.png", 
+        image_url_down: "https://iili.io/38SUgPh.png" 
+      },
+      {
+        name: "Колесо Фортуны",
+        image_url_up: "https://iili.io/38SUmdA.png", 
+        image_url_down: "https://iili.io/38SUtBj.png" 
+      },
+      {
+        name: "Справедливость",
+        image_url_up: "https://iili.io/38SUOQb.png", 
+        image_url_down: "https://iili.io/38SUvNp.png" 
+      },
+      {
+        name: "Повешенный",
+        image_url_up: "https://iili.io/38SU9uF.png", 
+        image_url_down: "https://iili.io/38SUFP2.png" 
+      },
+      {
+        name: "Смерть",
+        image_url_up: "https://iili.io/38SUQmS.png", 
+        image_url_down: "https://iili.io/38SURVx.png" 
+      },
+      {
+        name: "Умеренность",
+        image_url_up: "https://iili.io/38SUJsh.png", 
+        image_url_down: "https://iili.io/38SUPEM.png" 
+      },
+      {
+        name: "Дьявол",
+        image_url_up: "https://iili.io/38SUWcI.png", 
+        image_url_down: "https://iili.io/38SUjXG.png" 
+      },
+      {
+        name: "Башня",
+        image_url_up: "https://iili.io/38SUqJt.png", 
+        image_url_down: "https://iili.io/38SUaLr.png" 
+      },
+      {
+        name: "Звезда",
+        image_url_up: "https://iili.io/38SUeKg.png", 
+        image_url_down: "https://iili.io/38SUZnP.png" 
+      },
+      {
+        name: "Луна",
+        image_url_up: "https://iili.io/38SUHsF.png", 
+        image_url_down: "https://iili.io/38SUXyR.png" 
+      },
+      {
+        name: "Солнце",
+        image_url_up: "https://iili.io/38SUwEo.png", 
+        image_url_down: "https://iili.io/38SUlVn.png" 
+      },
+      {
+        name: "Суд",
+        image_url_up: "https://iili.io/38SUKkS.png", 
+        image_url_down: "https://iili.io/38SUgPh.png" 
+      },
+      {
+        name: "Мир",
+        image_url_up: "https://iili.io/38SUmdA.png", 
+        image_url_down: "https://iili.io/38SUtBj.png" 
+      },
+      {
+        name: "Шут",
+        image_url_up: "https://iili.io/38SUOQb.png", 
+        image_url_down: "https://iili.io/38SUvNp.png" 
+      }
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("card-container");
+      const tg = window.Telegram.WebApp;
+      tg.ready();
+
+      let selectedCards = [];
+      const totalCardsToShow = 6;
+      let usedCards = [];
+
+      // Очистка контейнера перед созданием новых карт
+      container.innerHTML = '';
+
+      // Получаем вопрос из URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const question = urlParams.get('question') || "Как мне изменить жизнь?";
+
+      // Создаем карты
+      for (let i = 0; i < totalCardsToShow; i++) {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.id = i;
+
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-front"></div>
+            <div class="card-back"></div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => selectCard(card));
+        container.appendChild(card);
+      }
+
+      function selectCard(card) {
+        if (selectedCards.includes(card)) return;
+
+        if (selectedCards.length >= 3) {
+          alert("Можно выбрать только 3 карты");
+          return;
+        }
+
+        // Выбираем случайную уникальную карту
+        let availableCards = tarotCards.filter(c => !usedCards.includes(c.name));
+        if (availableCards.length === 0) {
+          alert("Все карты уже использованы. Пожалуйста, начните заново.");
+          return;
+        }
+
+        let meaning = shuffleArray(availableCards)[0];
+        usedCards.push(meaning.name);
+        selectedCards.push(card);
+        card.classList.add("selected");
+
+        const isReversed = Math.random() < 0.5;
+        const back = card.querySelector(".card-back");
+
+        back.innerHTML = `
+          <img src="${isReversed ? meaning.image_url_down : meaning.image_url_up}" 
+               alt="${meaning.name}" 
+               style="width: 100%; height: auto; max-height: 75%; border-radius: 10px;">
+          <p>${meaning.name}</p>
+          <small>${isReversed ? '(Перевернутая)' : '(Прямая)'}</small>
+        `;
+
+        // Сохраняем данные о положении в dataset
+        card.dataset.position = isReversed ? 'reversed' : 'upright';
+
+        setTimeout(() => {
+          card.classList.add("flipped");
+        }, 100);
+
+        if (selectedCards.length === 3) {
+          showContinueButton();
+        }
+      }
+
+      function showContinueButton() {
+        // Удаляем старую кнопку, если она есть
+        const oldBtn = document.getElementById("continue-btn");
+        if (oldBtn) oldBtn.remove();
+
+        const btn = document.createElement("button");
+        btn.textContent = "Продолжить";
+        btn.id = "continue-btn";
+        btn.style.marginTop = "60px";
+        btn.style.padding = "12px 20px";
+        btn.style.fontSize = "16px";
+        btn.style.backgroundColor = "#4CAF50";
+        btn.style.color = "white";
+        btn.style.border = "none";
+        btn.style.borderRadius = "5px";
+        btn.style.cursor = "pointer";
+
+        btn.addEventListener("click", () => {
+          const selectedCardsData = selectedCards.map((card) => {
+            return {
+              name: card.querySelector(".card-back p").textContent,
+              position: card.dataset.position
+            };
+          });
+
+          console.log("📤 Отправляемые данные:", { cards: selectedCardsData, question });
+
+          // Отправляем данные в Telegram
+          try {
+            tg.sendData(JSON.stringify({ cards: selectedCardsData, question }));
+            console.log("✅ Данные успешно отправлены в Telegram Web App");
+          } catch (error) {
+            console.error("❌ Ошибка при отправке данных:", error);
+          }
+
+          // Закрываем мини-приложение через 0.5 секунды
+          setTimeout(() => {
+            tg.close();
+          }, 500);
+        });
+
+        document.body.appendChild(btn);
+      }
+
+      // Функция для перемешивания массива
+      function shuffleArray(array) {
+        return array.sort(() => Math.random() - 0.5);
+      }
+    });
+  </script>
 </body>
 </html>
