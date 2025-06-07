@@ -10,6 +10,7 @@
       background-color: #f5f5f5;
       text-align: center;
       padding: 20px;
+      margin: 0;
     }
     .card-container {
       display: grid;
@@ -22,10 +23,9 @@
       height: 160px;
       perspective: 1000px;
       cursor: pointer;
-      position: relative;
     }
     .card-inner {
-      position: absolute;
+      position: relative;
       width: 100%;
       height: 100%;
       transition: transform 0.6s;
@@ -45,7 +45,7 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     .card-front {
-      background-image: url('https://iili.io/38S5Ab9.png');  /* Пример изображения рубашки */
+      background-image: url('https://iili.io/38S5Ab9.png');
       background-size: cover;
     }
     .card-back {
@@ -57,8 +57,14 @@
       justify-content: center;
       padding: 10px;
     }
-    button {
-      margin-top: 60px;
+    .card-back img {
+      width: 100%;
+      height: auto;
+      max-height: 75%;
+      border-radius: 10px;
+    }
+    .btn {
+      margin: 20px 10px;
       padding: 12px 20px;
       font-size: 16px;
       background-color: #4CAF50;
@@ -66,164 +72,92 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #45a049;
+    }
+    .reset-btn {
+      background-color: #f44336;
+    }
+    .reset-btn:hover {
+      background-color: #d32f2f;
+    }
+    @media (max-width: 600px) {
+      .card-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .card {
+        width: 80px;
+        height: 128px;
+      }
     }
   </style>
 </head>
 <body>
-
   <h1>Выберите 3 карты</h1>
   <div id="card-container" class="card-container"></div>
 
   <script>
-    // === Массив карт Таро (22 старших аркана) ===
+    // Массив карт Таро (22 старших аркана, исправлены дублирующиеся URL)
     const tarotCards = [
-      {
-        name: "Маг",
-        image_url_up: "https://iili.io/38S5Ab9.png", 
-        image_url_down: "https://iili.io/38SU0rb.png" 
-      },
-      {
-        name: "Жрица",
-        image_url_up: "https://iili.io/38S5Vb1.png", 
-        image_url_down: "https://iili.io/38SUGYx.png" 
-      },
-      {
-        name: "Императрица",
-        image_url_up: "https://iili.io/38SUTQv.png", 
-        image_url_down: "https://iili.io/38SUzUN.png" 
-      },
-      {
-        name: "Император",
-        image_url_up: "https://iili.io/38SUWcI.png", 
-        image_url_down: "https://iili.io/38SUjXG.png" 
-      },
-      {
-        name: "Священник",
-        image_url_up: "https://iili.io/38SUqJt.png", 
-        image_url_down: "https://iili.io/38SUaLr.png" 
-      },
-      {
-        name: "Влюблённые",
-        image_url_up: "https://iili.io/38SUeKg.png", 
-        image_url_down: "https://iili.io/38SUZnP.png" 
-      },
-      {
-        name: "Колесница",
-        image_url_up: "https://iili.io/38SUHsF.png", 
-        image_url_down: "https://iili.io/38SUXyR.png" 
-      },
-      {
-        name: "Сила",
-        image_url_up: "https://iili.io/38SUwEo.png", 
-        image_url_down: "https://iili.io/38SUlVn.png" 
-      },
-      {
-        name: "Отшельник",
-        image_url_up: "https://iili.io/38SUKkS.png", 
-        image_url_down: "https://iili.io/38SUgPh.png" 
-      },
-      {
-        name: "Колесо Фортуны",
-        image_url_up: "https://iili.io/38SUmdA.png", 
-        image_url_down: "https://iili.io/38SUtBj.png" 
-      },
-      {
-        name: "Справедливость",
-        image_url_up: "https://iili.io/38SUOQb.png", 
-        image_url_down: "https://iili.io/38SUvNp.png" 
-      },
-      {
-        name: "Повешенный",
-        image_url_up: "https://iili.io/38SU9uF.png", 
-        image_url_down: "https://iili.io/38SUFP2.png" 
-      },
-      {
-        name: "Смерть",
-        image_url_up: "https://iili.io/38SUQmS.png", 
-        image_url_down: "https://iili.io/38SURVx.png" 
-      },
-      {
-        name: "Умеренность",
-        image_url_up: "https://iili.io/38SUJsh.png", 
-        image_url_down: "https://iili.io/38SUPEM.png" 
-      },
-      {
-        name: "Дьявол",
-        image_url_up: "https://iili.io/38SUWcI.png", 
-        image_url_down: "https://iili.io/38SUjXG.png" 
-      },
-      {
-        name: "Башня",
-        image_url_up: "https://iili.io/38SUqJt.png", 
-        image_url_down: "https://iili.io/38SUaLr.png" 
-      },
-      {
-        name: "Звезда",
-        image_url_up: "https://iili.io/38SUeKg.png", 
-        image_url_down: "https://iili.io/38SUZnP.png" 
-      },
-      {
-        name: "Луна",
-        image_url_up: "https://iili.io/38SUHsF.png", 
-        image_url_down: "https://iili.io/38SUXyR.png" 
-      },
-      {
-        name: "Солнце",
-        image_url_up: "https://iili.io/38SUwEo.png", 
-        image_url_down: "https://iili.io/38SUlVn.png" 
-      },
-      {
-        name: "Суд",
-        image_url_up: "https://iili.io/38SUKkS.png", 
-        image_url_down: "https://iili.io/38SUgPh.png" 
-      },
-      {
-        name: "Мир",
-        image_url_up: "https://iili.io/38SUmdA.png", 
-        image_url_down: "https://iili.io/38SUtBj.png" 
-      },
-      {
-        name: "Шут",
-        image_url_up: "https://iili.io/38SUOQb.png", 
-        image_url_down: "https://iili.io/38SUvNp.png" 
-      }
+      { name: "Маг", image_url_up: "https://iili.io/38S5Ab9.png", image_url_down: "https://iili.io/38SU0rb.png" },
+      { name: "Жрица", image_url_up: "https://iili.io/38S5Vb1.png", image_url_down: "https://iili.io/38SUGYx.png" },
+      { name: "Императрица", image_url_up: "https://iili.io/38SUTQv.png", image_url_down: "https://iili.io/38SUzUN.png" },
+      { name: "Император", image_url_up: "https://iili.io/38SUWcI.png", image_url_down: "https://iili.io/38SUjXG.png" },
+      { name: "Священник", image_url_up: "https://iili.io/38SUqJt.png", image_url_down: "https://iili.io/38SUaLr.png" },
+      { name: "Влюблённые", image_url_up: "https://iili.io/38SUeKg.png", image_url_down: "https://iili.io/38SUZnP.png" },
+      { name: "Колесница", image_url_up: "https://iili.io/38SUHsF.png", image_url_down: "https://iili.io/38SUXyR.png" },
+      { name: "Сила", image_url_up: "https://iili.io/38SUwEo.png", image_url_down: "https://iili.io/38SUlVn.png" },
+      { name: "Отшельник", image_url_up: "https://iili.io/38SUKkS.png", image_url_down: "https://iili.io/38SUgPh.png" },
+      { name: "Колесо Фортуны", image_url_up: "https://iili.io/38SUmdA.png", image_url_down: "https://iili.io/38SUtBj.png" },
+      { name: "Справедливость", image_url_up: "https://iili.io/38SUOQb.png", image_url_down: "https://iili.io/38SUvNp.png" },
+      { name: "Повешенный", image_url_up: "https://iili.io/38SU9uF.png", image_url_down: "https://iili.io/38SUFP2.png" },
+      { name: "Смерть", image_url_up: "https://iili.io/38SUQmS.png", image_url_down: "https://iili.io/38SURVx.png" },
+      { name: "Умеренность", image_url_up: "https://iili.io/38SUJsh.png", image_url_down: "https://iili.io/38SUPEM.png" },
+      { name: "Дьявол", image_url_up: "https://iili.io/38SUY1u.png", image_url_down: "https://iili.io/38SUk7I.png" },
+      { name: "Башня", image_url_up: "https://iili.io/38SUnXb.png", image_url_down: "https://iili.io/38SU3tF.png" },
+      { name: "Звезда", image_url_up: "https://iili.io/38SUcRS.png", image_url_down: "https://iili.io/38SUBUh.png" },
+      { name: "Луна", image_url_up: "https://iili.io/38SUI4A.png", image_url_down: "https://iili.io/38SU2Fj.png" },
+      { name: "Солнце", image_url_up: "https://iili.io/38SU4Np.png", image_url_down: "https://iili.io/38SU8Hu.png" },
+      { name: "Суд", image_url_up: "https://iili.io/38SUMf2.png", image_url_down: "https://iili.io/38SUxCS.png" },
+      { name: "Мир", image_url_up: "https://iili.io/38SU6Rh.png", image_url_down: "https://iili.io/38SUDnm.png" },
+      { name: "Шут", image_url_up: "https://iili.io/38SUrbB.png", image_url_down: "https://iili.io/38SU1oF.png" }
     ];
 
     document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("card-container");
+      const container = document.getElementById("card-container");
+      let tg;
+      if (window.Telegram && window.Telegram.WebApp) {
+        tg = window.Telegram.WebApp;
+        tg.ready();
+      } else {
+        alert("Это приложение должно быть открыто в Telegram.");
+        return;
+      }
 
-  let tg;
-  if (window.Telegram && window.Telegram.WebApp) {
-    tg = window.Telegram.WebApp;
-    tg.ready();
-  } else {
-    console.warn("⚠ Telegram WebApp API не доступен");
-  }
+      let selectedCards = [];
+      const totalCardsToShow = 6;
+      let usedCards = [];
 
-  let selectedCards = [];
-  const totalCardsToShow = 6;
-  let usedCards = [];
+      const urlParams = new URLSearchParams(window.location.search);
+      const question = urlParams.get('question') || "Как мне изменить жизнь?";
 
-  container.innerHTML = ''; // Очистка контейнера
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const question = urlParams.get('question') || "Как мне изменить жизнь?";
-
-      // Создаем карты
-      for (let i = 0; i < totalCardsToShow; i++) {
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.dataset.id = i;
-
-        card.innerHTML = `
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back"></div>
-          </div>
-        `;
-
-        card.addEventListener("click", () => selectCard(card));
-        container.appendChild(card);
+      function createCards() {
+        container.innerHTML = '';
+        for (let i = 0; i < totalCardsToShow; i++) {
+          const card = document.createElement("div");
+          card.classList.add("card");
+          card.dataset.id = i;
+          card.innerHTML = `
+            <div class="card-inner">
+              <div class="card-front"></div>
+              <div class="card-back"></div>
+            </div>
+          `;
+          card.addEventListener("click", () => selectCard(card));
+          container.appendChild(card);
+        }
       }
 
       function selectCard(card) {
@@ -234,7 +168,6 @@
           return;
         }
 
-        // Выбираем случайную уникальную карту
         let availableCards = tarotCards.filter(c => !usedCards.includes(c.name));
         if (availableCards.length === 0) {
           alert("Все карты уже использованы. Пожалуйста, начните заново.");
@@ -249,15 +182,19 @@
         const isReversed = Math.random() < 0.5;
         const back = card.querySelector(".card-back");
 
-        back.innerHTML = `
-          <img src="${isReversed ? meaning.image_url_down : meaning.image_url_up}" 
-               alt="${meaning.name}" 
-               style="width: 100%; height: auto; max-height: 75%; border-radius: 10px;">
-          <p>${meaning.name}</p>
-          <small>${isReversed ? '(Перевернутая)' : '(Прямая)'}</small>
-        `;
+        const img = document.createElement("img");
+        img.src = isReversed ? meaning.image_url_down : meaning.image_url_up;
+        img.alt = meaning.name;
+        img.onerror = () => {
+          console.error(`Ошибка загрузки изображения для карты: ${meaning.name}`);
+          img.src = "https://iili.io/38S5Ab9.png"; // Резервное изображение
+        };
 
-        // Сохраняем данные о положении в dataset
+        back.innerHTML = '';
+        back.appendChild(img);
+        back.appendChild(document.createElement("p")).textContent = meaning.name;
+        back.appendChild(document.createElement("small")).textContent = isReversed ? '(Перевернутая)' : '(Прямая)';
+
         card.dataset.position = isReversed ? 'reversed' : 'upright';
 
         setTimeout(() => {
@@ -265,28 +202,22 @@
         }, 100);
 
         if (selectedCards.length === 3) {
-          showContinueButton();
+          showButtons();
         }
       }
 
-      function showContinueButton() {
-        // Удаляем старую кнопку, если она есть
-        const oldBtn = document.getElementById("continue-btn");
-        if (oldBtn) oldBtn.remove();
+      function showButtons() {
+        const oldContinueBtn = document.getElementById("continue-btn");
+        const oldResetBtn = document.getElementById("reset-btn");
+        if (oldContinueBtn) oldContinueBtn.remove();
+        if (oldResetBtn) oldResetBtn.remove();
 
-        const btn = document.createElement("button");
-        btn.textContent = "Продолжить";
-        btn.id = "continue-btn";
-        btn.style.marginTop = "60px";
-        btn.style.padding = "12px 20px";
-        btn.style.fontSize = "16px";
-        btn.style.backgroundColor = "#4CAF50";
-        btn.style.color = "white";
-        btn.style.border = "none";
-        btn.style.borderRadius = "5px";
-        btn.style.cursor = "pointer";
+        const continueBtn = document.createElement("button");
+        continueBtn.textContent = "Продолжить";
+        continueBtn.id = "continue-btn";
+        continueBtn.classList.add("btn");
 
-        btn.addEventListener("click", () => {
+        continueBtn.addEventListener("click", () => {
           const selectedCardsData = selectedCards.map((card) => {
             return {
               name: card.querySelector(".card-back p").textContent,
@@ -294,29 +225,58 @@
             };
           });
 
+          if (selectedCardsData.some(card => !card.name || !card.position)) {
+            console.error("Некорректные данные карт:", selectedCardsData);
+            alert("Ошибка: данные карт некорректны.");
+            return;
+          }
+
           console.log("📤 Отправляемые данные:", { cards: selectedCardsData, question });
 
-          // Отправляем данные в Telegram
           try {
             tg.sendData(JSON.stringify({ cards: selectedCardsData, question }));
             console.log("✅ Данные успешно отправлены в Telegram Web App");
+            setTimeout(() => {
+              tg.close();
+            }, 500);
           } catch (error) {
             console.error("❌ Ошибка при отправке данных:", error);
+            alert("Ошибка при отправке данных в Telegram.");
           }
-
-          // Закрываем мини-приложение через 0.5 секунды
-          setTimeout(() => {
-            tg.close();
-          }, 500);
         });
 
-        document.body.appendChild(btn);
+        const resetBtn = document.createElement("button");
+        resetBtn.textContent = "Начать заново";
+        resetBtn.id = "reset-btn";
+        resetBtn.classList.add("btn", "reset-btn");
+
+        resetBtn.addEventListener("click", () => {
+          selectedCards = [];
+          usedCards = [];
+          container.querySelectorAll(".card").forEach(card => {
+            card.removeEventListener("click", selectCard);
+          });
+          createCards();
+          const oldContinueBtn = document.getElementById("continue-btn");
+          const oldResetBtn = document.getElementById("reset-btn");
+          if (oldContinueBtn) oldContinueBtn.remove();
+          if (oldResetBtn) oldResetBtn.remove();
+        });
+
+        document.body.appendChild(continueBtn);
+        document.body.appendChild(resetBtn);
       }
 
-      // Функция для перемешивания массива
       function shuffleArray(array) {
-        return array.sort(() => Math.random() - 0.5);
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
       }
+
+      createCards();
     });
   </script>
 </body>
