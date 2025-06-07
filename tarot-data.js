@@ -36,7 +36,7 @@ const tarotCards = [
     }
   },
   {
-    "name": "Жрец",
+    "name": "Иерофант",
     "image_url_up": "https://iili.io/38S5HSp.png ",
     "image_url_down": "https://iili.io/38SU91a.png ",
     "meaning": {
