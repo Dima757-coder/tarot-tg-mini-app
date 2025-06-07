@@ -10,6 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Очистка контейнера перед созданием новых карт
   container.innerHTML = '';
 
+  // Получаем вопрос из URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const question = urlParams.get('question') || "Как мне изменить жизнь?";
+
   // Создаем карты
   for (let i = 0; i < totalCardsToShow; i++) {
     const card = document.createElement("div");
@@ -49,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isReversed = Math.random() < 0.5;
     const back = card.querySelector(".card-back");
-    
+
     back.innerHTML = `
       <img src="${isReversed ? meaning.image_url_down : meaning.image_url_up}" 
            alt="${meaning.name}" 
@@ -95,8 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       });
 
-      console.log("📤 Отправляемые данные:", { cards: selectedCardsData });
-      tg.sendData(JSON.stringify({ cards: selectedCardsData }));
+      console.log("📤 Отправляемые данные:", { cards: selectedCardsData, question });
+      tg.sendData(JSON.stringify({ cards: selectedCardsData, question }));
 
       setTimeout(() => {
         tg.close();
